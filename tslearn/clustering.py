@@ -473,7 +473,7 @@ class TimeSeriesKMeans(BaseEstimator, ClusterMixin, TimeSeriesCentroidBasedClust
             self.metric_params = {}
         else:
             self.metric_params = metric_params
-        self.gamma_sdtw = metric_params.get("gamma_sdtw", 1.)
+        self.gamma_sdtw = self.metric_params.get("gamma_sdtw", 1.)
 
     def _fit_one_init(self, X, x_squared_norms, rs):
         n_ts, _, d = X.shape
