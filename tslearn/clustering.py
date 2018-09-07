@@ -470,7 +470,9 @@ class TimeSeriesKMeans(BaseEstimator, ClusterMixin, TimeSeriesCentroidBasedClust
         self._squared_inertia = True
 
         if metric_params is None:
-            metric_params = {}
+            self.metric_params = {}
+        else:
+            self.metric_params = metric_params
         self.gamma_sdtw = metric_params.get("gamma_sdtw", 1.)
 
     def _fit_one_init(self, X, x_squared_norms, rs):
@@ -503,7 +505,8 @@ class TimeSeriesKMeans(BaseEstimator, ClusterMixin, TimeSeriesCentroidBasedClust
         elif self.metric == "softdtw":
             dists = cdist_soft_dtw(X, self.cluster_centers_, gamma=self.gamma_sdtw)
         else:
-            raise ValueError("Incorrect metric: %s (should be one of 'dtw', 'softdtw', 'euclidean')" % self.metric)
+            dists = self.metric(X, self.cluster_centers_, **self.metric_params)
+            #raise ValueError("Incorrect metric: %s (should be one of 'dtw', 'softdtw', 'euclidean')" % self.metric)
         matched_labels = dists.argmin(axis=1)
         if update_class_attributes:
             self.labels_ = matched_labels
