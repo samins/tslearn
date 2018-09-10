@@ -520,17 +520,18 @@ class TimeSeriesKMeans(BaseEstimator, ClusterMixin, TimeSeriesCentroidBasedClust
 
     def _update_centroids(self, X):
         for k in range(self.n_clusters):
-            if self.metric == "dtw":
-                self.cluster_centers_[k] = DTWBarycenterAveraging(max_iter=self.max_iter_barycenter,
-                                                                  barycenter_size=None,
-                                                                  init_barycenter=self.cluster_centers_[k],
-                                                                  verbose=False).fit(X[self.labels_ == k])
+            if self.metric == "euclidean":
+                self.cluster_centers_[k] = EuclideanBarycenter().fit(X[self.labels_ == k])
+
             elif self.metric == "softdtw":
                 self.cluster_centers_[k] = SoftDTWBarycenter(max_iter=self.max_iter_barycenter,
                                                              gamma=self.gamma_sdtw,
                                                              init=self.cluster_centers_[k]).fit(X[self.labels_ == k])
             else:
-                self.cluster_centers_[k] = EuclideanBarycenter().fit(X[self.labels_ == k])
+                self.cluster_centers_[k] = DTWBarycenterAveraging(max_iter=self.max_iter_barycenter,
+                                                                  barycenter_size=None,
+                                                                  init_barycenter=self.cluster_centers_[k],
+                                                                  verbose=False).fit(X[self.labels_ == k])
 
     def fit(self, X, y=None):
         """Compute k-means clustering.
